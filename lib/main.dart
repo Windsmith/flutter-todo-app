@@ -45,6 +45,17 @@ class _IncompleteTasksPageState extends State<IncompleteTasksPage> {
                             _tasks[i ~/ 2],
                             style: _biggerFont,
                           ),
+                          trailing: const Icon(
+                            Icons.check,
+                            color: Colors.green,
+                            semanticLabel: 'Task done',
+                          ),
+                          onTap: () {
+                            setState(() {
+                              _completedTasks.add(_tasks[i ~/ 2]);
+                              _tasks.remove(_tasks[i ~/ 2]);
+                            });
+                          },
                         )
               ]),
       ),
