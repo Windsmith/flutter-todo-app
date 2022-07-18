@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const IncompleteTasksPage();
+    return const TaskListsPage();
   }
 }
 
@@ -91,6 +91,79 @@ class _IncompleteTasksPageState extends State<IncompleteTasksPage> {
         },
         backgroundColor: Colors.green,
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class TaskListsPage extends StatefulWidget {
+  const TaskListsPage({super.key});
+
+  @override
+  State<TaskListsPage> createState() => _TaskListsPageState();
+}
+
+class _TaskListsPageState extends State<TaskListsPage> {
+  final _taskLists = {};
+
+  final TextEditingController taskListAddController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Tasks ToDo'),
+      ),
+      body: Center(
+        child: _taskLists.isEmpty
+            ? const Text("Press the button to create a new task list!")
+            : ListView(
+                padding: const EdgeInsets.all(16.0),
+                children: [
+                  for (final key in _taskLists.keys)
+                    ListTile(
+                        title: Text(key),
+                        trailing: const Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                          semanticLabel: 'delete the list',
+                        ),
+                        onTap: null //TODO: Create task page functionality,
+                        )
+                ],
+              ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return Expanded(
+                  child: SimpleDialog(
+                    title: const Text("Add TaskList"),
+                    children: <Widget>[
+                      TextField(
+                          decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              hintText: 'Enter Task List name'),
+                          controller: taskListAddController),
+                      SimpleDialogOption(
+                        onPressed: () {
+                          setState(() {
+                            final text = taskListAddController.text;
+                            _taskLists[text] = <String>[];
+                            Navigator.pop(context);
+                          });
+                        },
+                        child: const Text("Enter"),
+                      ),
+                    ],
+                  ),
+                );
+              });
+        },
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.list),
       ),
     );
   }
