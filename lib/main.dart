@@ -14,14 +14,16 @@ class MyApp extends StatelessWidget {
 }
 
 class IncompleteTasksPage extends StatefulWidget {
-  const IncompleteTasksPage({super.key});
+  const IncompleteTasksPage({super.key, required this.tasks});
+
+  final tasks;
 
   @override
   State<IncompleteTasksPage> createState() => _IncompleteTasksPageState();
 }
 
 class _IncompleteTasksPageState extends State<IncompleteTasksPage> {
-  final _tasks = <String>[];
+  final _tasks = <String>[]; // TODO: Currently obsolete because of widget.tasks
   final _completedTasks = <String>[];
   final _biggerFont = const TextStyle(fontSize: 18);
 
@@ -34,15 +36,15 @@ class _IncompleteTasksPageState extends State<IncompleteTasksPage> {
         title: const Text('Tasks ToDo'),
       ),
       body: Center(
-        child: _tasks.isEmpty
+        child: _tasks.isEmpty && widget.tasks.isEmpty
             ? const Text("You have completed all your tasks!")
             : ListView(padding: const EdgeInsets.all(16.0), children: [
-                for (int i = 0; i < _tasks.length * 2; i++)
+                for (int i = 0; i < widget.tasks.length * 2; i++)
                   (i % 2 != 0)
                       ? Divider()
                       : ListTile(
                           title: Text(
-                            _tasks[i ~/ 2],
+                            widget.tasks[i ~/ 2],
                             style: _biggerFont,
                           ),
                           trailing: const Icon(
@@ -52,8 +54,8 @@ class _IncompleteTasksPageState extends State<IncompleteTasksPage> {
                           ),
                           onTap: () {
                             setState(() {
-                              _completedTasks.add(_tasks[i ~/ 2]);
-                              _tasks.remove(_tasks[i ~/ 2]);
+                              _completedTasks.add(widget.tasks[i ~/ 2]);
+                              widget.tasks.remove(widget.tasks[i ~/ 2]);
                             });
                           },
                         )
@@ -77,7 +79,7 @@ class _IncompleteTasksPageState extends State<IncompleteTasksPage> {
                       onPressed: () {
                         setState(() {
                           final text = taskAddTextController.text;
-                          _tasks.add(text);
+                          widget.tasks.add(text);
                           Navigator.pop(context);
                         });
                       },
@@ -128,7 +130,15 @@ class _TaskListsPageState extends State<TaskListsPage> {
                           color: Colors.red,
                           semanticLabel: 'delete the list',
                         ),
-                        onTap: null //TODO: Create task page functionality,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  IncompleteTasksPage(tasks: _taskLists[key]),
+                            ),
+                          );
+                        } //TODO: Create task page functionality,
                         )
                 ],
               ),
